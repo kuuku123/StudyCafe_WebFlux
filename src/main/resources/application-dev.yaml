@@ -1,0 +1,10 @@
+server:
+  port: 8082
+
+cors:
+  allowed-origin: http://localhost:3000
+
+kafka:
+  bootstrap:
+    server: localhost:19092
+

@@ -17,6 +17,14 @@ public class NotificationController {
 
     @GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> streamNotifications(@RequestParam String email) {
+        System.out.println("===============================================================");
+        System.out.println("email = " + email);
+        System.out.println("===============================================================");
         return notificationService.getNotifications(email);
+    }
+
+    @GetMapping("/hello")
+    public String sayHello(@RequestParam(value = "name", defaultValue = "World") String name) {
+        return "Hello, " + name + "!";
     }
 }
