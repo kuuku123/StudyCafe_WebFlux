@@ -18,9 +18,14 @@ public class NotificationService {
     public Flux<ServerSentEvent<String>> getNotifications(String email) {
         return sink.asFlux()
                 .filter(event -> event.getEmail().equals(email)) // Filter by client
+                .doOnCancel(() -> handleClientDisConnection(email))
                 .map(event -> ServerSentEvent.builder(event.getData())
                         .event(event.getEventName()) // Add the event name
                         .build());
+    }
+
+    private void handleClientDisConnection(String email) {
+        System.out.println("disconnected client email = " + email);
     }
 
     public void notifyClientsStudyCreate(NotificationDto notificationDto) {
