@@ -15,18 +15,14 @@ public class NotificationService {
         this.sink = Sinks.many().multicast().onBackpressureBuffer();
     }
 
-    public Flux<ServerSentEvent<String>> getNotifications(String email) {
+    public Flux<ServerSentEvent<NotificationEvent>> getNotifications(String email) {
         return sink.asFlux()
                 .filter(event -> event.getEmail().equals(email)) // Filter by client
-                .doOnCancel(() -> handleClientDisConnection(email))
-                .map(event -> ServerSentEvent.builder(event.getData())
+                .map(event -> ServerSentEvent.builder(event)
                         .event(event.getEventName()) // Add the event name
                         .build());
     }
 
-    private void handleClientDisConnection(String email) {
-        System.out.println("disconnected client email = " + email);
-    }
 
     public void notifyClientsStudyCreate(NotificationDto notificationDto) {
         String eventName = switch (notificationDto.getNotificationType()) {
@@ -36,6 +32,7 @@ public class NotificationService {
         };
 
         NotificationEvent event = new NotificationEvent(
+                notificationDto.getId(),
                 notificationDto.getAccountEmail(),
                 eventName,
                 notificationDto.getStudyPath()
