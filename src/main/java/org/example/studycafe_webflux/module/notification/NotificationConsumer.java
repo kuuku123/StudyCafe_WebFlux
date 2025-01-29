@@ -14,7 +14,7 @@ public class NotificationConsumer {
 
     @KafkaListener(topics = "notification_topic", groupId = "notification-group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(NotificationDto notificationDto) {
-        System.out.println("Consumed message: " + notificationDto);
+        System.out.println("notificationDto = " + notificationDto.getMessage() + " " + notificationDto.getAccountEmail());
         notificationService.notifyClientsStudyCreate(notificationDto);
     }
 }

@@ -1,0 +1,12 @@
+server:
+  port: 8082
+
+cors:
+  allowed-origin: http://tonylimtest123.duckdns.org #duckdns
+
+kafka:
+  bootstrap:
+    server: broker-1:9093
+
+
+

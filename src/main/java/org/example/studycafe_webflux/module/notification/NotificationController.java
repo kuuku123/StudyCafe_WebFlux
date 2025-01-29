@@ -18,7 +18,9 @@ public class NotificationController {
 
     @GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<NotificationEvent>> streamNotifications(@RequestParam String email) {
-        return notificationService.getNotifications(email);
+        return Flux.concat(
+                notificationService.getNotifications(email)
+        );
     }
 
 }

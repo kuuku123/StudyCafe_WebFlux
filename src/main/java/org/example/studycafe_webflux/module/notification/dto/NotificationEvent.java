@@ -13,6 +13,7 @@ public class NotificationEvent {
         this.path= path;
     }
 
+
     public String getEmail() {
         return email;
     }

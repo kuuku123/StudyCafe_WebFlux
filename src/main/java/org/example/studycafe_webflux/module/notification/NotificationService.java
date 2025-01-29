@@ -7,6 +7,8 @@ import reactor.core.publisher.Flux;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 public class NotificationService {
     private final Sinks.Many<NotificationEvent> sink;
@@ -18,9 +20,16 @@ public class NotificationService {
     public Flux<ServerSentEvent<NotificationEvent>> getNotifications(String email) {
         return sink.asFlux()
                 .filter(event -> event.getEmail().equals(email)) // Filter by client
-                .map(event -> ServerSentEvent.builder(event)
-                        .event(event.getEventName()) // Add the event name
-                        .build());
+                .map(event -> ServerSentEvent.builder(event) .event(event.getEventName()) // Add the event name
+                        .build())
+                .mergeWith(
+                        Flux.just(
+                                ServerSentEvent.<NotificationEvent>builder()
+                                        .event("initial")  // or any event name you like
+                                        .data(new NotificationEvent(-1L, email, null, "connectionEstablished"))
+                                        .build()
+                        )
+                );
     }
 
 
