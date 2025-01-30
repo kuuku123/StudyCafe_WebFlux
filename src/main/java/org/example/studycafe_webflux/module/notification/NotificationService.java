@@ -14,22 +14,16 @@ public class NotificationService {
     private final Sinks.Many<NotificationEvent> sink;
 
     public NotificationService() {
-        this.sink = Sinks.many().multicast().onBackpressureBuffer();
+        this.sink = Sinks.many().multicast().onBackpressureBuffer(
+                256, false
+        );
     }
 
     public Flux<ServerSentEvent<NotificationEvent>> getNotifications(String email) {
-        return sink.asFlux()
+        return sink.asFlux().log("SSE")
                 .filter(event -> event.getEmail().equals(email)) // Filter by client
                 .map(event -> ServerSentEvent.builder(event) .event(event.getEventName()) // Add the event name
-                        .build())
-                .mergeWith(
-                        Flux.just(
-                                ServerSentEvent.<NotificationEvent>builder()
-                                        .event("initial")  // or any event name you like
-                                        .data(new NotificationEvent(-1L, email, null, "connectionEstablished"))
-                                        .build()
-                        )
-                );
+                        .build());
     }
 
 

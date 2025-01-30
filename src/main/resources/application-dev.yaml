@@ -7,4 +7,3 @@ cors:
 kafka:
   bootstrap:
     server: localhost:19092
-

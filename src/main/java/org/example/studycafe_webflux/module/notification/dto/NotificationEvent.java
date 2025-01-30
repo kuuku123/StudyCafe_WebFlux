@@ -4,13 +4,13 @@ public class NotificationEvent {
     private final Long id;
     private final String email;
     private final String eventName;
-    private final String path;
+    private final String studyPath;
 
     public NotificationEvent(Long id, String email, String eventName, String path) {
         this.id = id;
         this.email = email;
         this.eventName = eventName;
-        this.path= path;
+        this.studyPath = path;
     }
 
 
@@ -26,8 +26,8 @@ public class NotificationEvent {
         return id;
     }
 
-    public String getPath() {
-        return path;
+    public String getStudyPath() {
+        return studyPath;
     }
 }
 
