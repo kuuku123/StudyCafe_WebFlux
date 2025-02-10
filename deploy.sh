@@ -9,16 +9,16 @@ echo "Running gradlew bootjar "
 
 # Step 2: Build the Docker image
 echo "Building Docker image..."
-docker build -t studycafe_webflux_notification .
+docker build -t studycafe-webflux-notification .
 
 # Step 3: Tag the Docker image
 echo "Tagging Docker image..."
-docker tag studycafe_webflux_notification:latest kuuku123/studycafe_webflux_notification:latest
+docker tag studycafe-webflux-notification:latest kuuku123/studycafe-webflux-notification:latest
 
 # Step 4: Push the Docker image to Docker Hub (if logged in)
 if docker info | grep -q "Username"; then
   echo "Pushing Docker image to Docker Hub..."
-  docker push kuuku123/studycafe_webflux_notification:latest
+  docker push kuuku123/studycafe-webflux-notification:latest
 else
   echo "Not logged into Docker. Skipping Docker image push."
 fi
