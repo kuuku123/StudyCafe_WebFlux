@@ -11,37 +11,38 @@ import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 public class ChatWebSocketHandler implements WebSocketHandler {
 
-    // This sink map could be replaced by a more robust room management solution.
-    // For demonstration, we'll use a single sink per room id.
-    private final Sinks.Many<String> defaultSink = Sinks.many().multicast().onBackpressureBuffer();
+    // Map to store a sink per room.
+    private final ConcurrentMap<String, Sinks.Many<String>> roomSinks = new ConcurrentHashMap<>();
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
-        // Extract the roomId from the URL
+        // Extract the roomId from the URL.
         String roomId = extractRoomId(session.getHandshakeInfo().getUri());
-        // For simplicity, using the default sink. In a real app, you'd have a map of sinks keyed by roomId.
-        Sinks.Many<String> roomSink = defaultSink; // or getSinkForRoom(roomId);
 
-        // Prepare an output flux that converts the sink’s messages into WebSocket messages
+        // Get or create a sink for the room.
+        Sinks.Many<String> roomSink = roomSinks.computeIfAbsent(roomId, id ->
+                Sinks.many().multicast().onBackpressureBuffer(256, false));
+
+        // Prepare an output flux converting the sink’s messages into WebSocket messages.
         Flux<WebSocketMessage> outputMessages = roomSink.asFlux()
                 .map(session::textMessage);
 
-        // Process incoming messages: each message received is pushed into the sink.
+        // Process incoming messages: each message is pushed into the room-specific sink.
         Mono<Void> input = session.receive()
                 .map(WebSocketMessage::getPayloadAsText)
-                .doOnNext(message -> {
-                    // You can add logic to include the roomId with the message if needed.
-                    roomSink.tryEmitNext("[" + roomId + "] " + message);
-                })
+                .doOnNext(roomSink::tryEmitNext)
                 .then();
 
-        // Send the output messages to the client and subscribe to the input flux.
+        // Send output messages to the client and subscribe to the input flux.
         return session.send(outputMessages).and(input);
     }
 
-    // Utility to extract roomId from the URI using regex
+    // Utility to extract roomId from the URI using regex.
     private String extractRoomId(URI uri) {
         // Assumes URL pattern like /chat/{roomId}
         Pattern pattern = Pattern.compile("/chat/(\\w+)");

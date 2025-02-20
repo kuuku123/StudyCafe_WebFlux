@@ -20,7 +20,7 @@ public class NotificationService {
     }
 
     public Flux<ServerSentEvent<NotificationEvent>> getNotifications(String email) {
-        return sink.asFlux().log("SSE")
+        return sink.asFlux()
                 .filter(event -> event.getEmail().equals(email)) // Filter by client
                 .map(event -> ServerSentEvent.builder(event) .event(event.getEventName()) // Add the event name
                         .build());
