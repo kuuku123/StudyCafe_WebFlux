@@ -1,5 +1,7 @@
 package org.example.studycafe_webflux.module.chat;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
@@ -14,8 +16,11 @@ import java.util.regex.Pattern;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@Component
+@RequiredArgsConstructor
 public class ChatWebSocketHandler implements WebSocketHandler {
 
+    private final ChatKafkaProducerService chatKafkaProducerService;
     // Map to store a sink per room.
     private final ConcurrentMap<String, Sinks.Many<String>> roomSinks = new ConcurrentHashMap<>();
 
@@ -30,12 +35,16 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 
         // Prepare an output flux converting the sink’s messages into WebSocket messages.
         Flux<WebSocketMessage> outputMessages = roomSink.asFlux()
+                .log("output")
                 .map(session::textMessage);
 
         // Process incoming messages: each message is pushed into the room-specific sink.
-        Mono<Void> input = session.receive()
+        Mono<Void> input = session.receive().log("input")
                 .map(WebSocketMessage::getPayloadAsText)
-                .doOnNext(roomSink::tryEmitNext)
+                .doOnNext(message -> {
+                    roomSink.tryEmitNext(message);
+                    chatKafkaProducerService.sendMessage(message);
+                })
                 .then();
 
         // Send output messages to the client and subscribe to the input flux.

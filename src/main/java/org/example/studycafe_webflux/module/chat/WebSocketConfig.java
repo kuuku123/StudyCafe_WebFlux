@@ -18,11 +18,6 @@ import java.util.Map;
 public class WebSocketConfig {
 
     @Bean
-    public WebSocketHandler chatWebSocketHandler() {
-        return new ChatWebSocketHandler();
-    }
-
-    @Bean
     public SimpleUrlHandlerMapping simpleUrlHandlerMapping(WebSocketHandler chatWebSocketHandler) {
         Map<String, WebSocketHandler> urlMap = new HashMap<>();
         urlMap.put("/chat/**", chatWebSocketHandler);

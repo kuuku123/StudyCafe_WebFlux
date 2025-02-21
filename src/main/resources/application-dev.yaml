@@ -7,3 +7,5 @@ cors:
 kafka:
   bootstrap:
     server: localhost:19092
+  topic:
+    chat: chat_topic
