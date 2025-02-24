@@ -1,6 +1,6 @@
 services:
   app:
-    image: kuuku123/studycafe_webflux_notification:latest
+    image: kuuku123/studycafe-webflux-notification:latest
     ports:
       - "8082:8082" # Map container port to host
     environment:
