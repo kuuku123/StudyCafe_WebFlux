@@ -1,2 +1,6 @@
 build/
+target/
+.idea/
+out/
+.gradle/
 

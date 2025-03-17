@@ -12,9 +12,11 @@ public class NotificationConsumer {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(topics = "notification_topic", groupId = "notification-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(id = "notificationListener", topics = "notification_topic", groupId = "notification_group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(NotificationDto notificationDto) {
-        System.out.println("notificationDto = " + notificationDto.getMessage() + " " + notificationDto.getAccountEmail());
+        System.out.println("notificationDto = " + notificationDto.getMessage() + " "
+            + notificationDto.getAccountEmail());
+
         notificationService.notifyClientsStudyCreate(notificationDto);
     }
 }
