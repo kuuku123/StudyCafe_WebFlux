@@ -2,7 +2,7 @@ services:
   app:
     image: kuuku123/studycafe-webflux-notification:latest
     ports:
-      - "8082:8082" # Map container port to host
+      - "8085:8085" # Map container port to host
     environment:
       SPRING_PROFILES_ACTIVE: prod # Set the Spring profile
 
