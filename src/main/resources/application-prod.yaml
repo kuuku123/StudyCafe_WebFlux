@@ -6,7 +6,7 @@ cors:
 
 kafka:
   bootstrap:
-    server: broker-1:9093
+    server: broker-1:9092
   topic:
     chat: chat_topic
 
