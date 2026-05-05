@@ -3,4 +3,4 @@ target/
 .idea/
 out/
 .gradle/
-
+*.class
