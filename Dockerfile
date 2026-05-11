@@ -11,5 +11,5 @@ COPY build/libs/webflux-notification.jar /app/webflux-notification.jar
 EXPOSE 8082
 
 # Run the application with the prod profile
-CMD ["java", "-jar", "webflux-notification.jar", "--spring.profiles.active=prod"]
+CMD ["java", "-jar", "webflux-notification.jar"]
 

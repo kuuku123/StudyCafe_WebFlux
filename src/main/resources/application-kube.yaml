@@ -1,0 +1,23 @@
+server:
+  port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: notification-service
+
+cors:
+  allowed-origin: http://localhost:8080
+
+kafka:
+  bootstrap:
+    server: broker-1:9092
+  topic:
+    chat: chat_topic
